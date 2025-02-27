@@ -1,10 +1,12 @@
-import React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
-import { PaperProvider, ProgressBar } from "react-native-paper"; // Ensure correct Provider
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, Button, ActivityIndicator, Alert } from "react-native";
+import { PaperProvider, ProgressBar } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import LoginScreen from "./LoginScreen";
-import RegisterScreen from "./RegisterScreen";
+import * as Location from "expo-location"; // Import Expo Location API
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import MapScreen from "./screens/MapScreen"; // Import Map Screen
 
 const Stack = createStackNavigator();
 
@@ -21,20 +23,51 @@ function HomeScreen({ navigation }) {
 }
 
 export default function App() {
+  const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Request location permissions on app startup
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission Denied", "Allow location access in settings.");
+        setLoading(false);
+        return;
+      }
+
+      let userLocation = await Location.getCurrentPositionAsync({});
+      setLocation(userLocation.coords);
+      setLoading(false);
+    })();
+  }, []);
+
+  // Show a loading spinner while getting location
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="green" />
+      </View>
+    );
+  }
+
   return (
     <PaperProvider>
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Home"
           screenOptions={{
-            headerStyle: { backgroundColor: 'green' },
-            headerTintColor: '#fff',
-            headerTitleAlign: 'center',
+            headerStyle: { backgroundColor: "green" },
+            headerTintColor: "#fff",
+            headerTitleAlign: "center",
           }}
         >
           <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Welcome" }} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: "Login" }} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ title: "Register" }} />
+          <Stack.Screen name="MapScreen">
+            {(props) => <MapScreen {...props} userLocation={location} />}
+          </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
@@ -55,7 +88,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   title: {
-    fontSize: 50, // Increased font size
+    fontSize: 50,
     fontWeight: "bold",
     color: "green",
     marginBottom: 20,
@@ -65,5 +98,10 @@ const styles = StyleSheet.create({
     height: 10,
     marginBottom: 20,
     borderRadius: 5,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
