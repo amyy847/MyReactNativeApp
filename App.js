@@ -6,7 +6,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 import * as Location from "expo-location"; // Import Expo Location API
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
-import MapScreen from "./screens/MapScreen"; // Import Map Screen
+import Dashboard from "./screens/Dashboard"; // Import Map Screen
+import OriginalMapScreen from './screens/OriginalMapScreen';
+import CameraViewsScreen from './screens/CameraViewsScreen';
+import LidarScreen from './screens/LidarScreen';
+import RadarScreen from './screens/RadarScreen';
+import PassengerDataScreen from './screens/PassengerDataScreen';
+import CarDataScreen from './screens/CarDataScreen';
 
 const Stack = createStackNavigator();
 
@@ -65,9 +71,16 @@ export default function App() {
           <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Welcome" }} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: "Login" }} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ title: "Register" }} />
-          <Stack.Screen name="MapScreen">
-            {(props) => <MapScreen {...props} userLocation={location} />}
+          <Stack.Screen name="Dashboard">
+            {(props) => <Dashboard {...props} userLocation={location} />}
           </Stack.Screen>
+          <Stack.Screen name="OriginalMapScreen" component={OriginalMapScreen} />
+          <Stack.Screen name="CameraViewsScreen" component={CameraViewsScreen} />
+          <Stack.Screen name="LidarScreen" component={LidarScreen} />
+          <Stack.Screen name="RadarScreen" component={RadarScreen} />
+          <Stack.Screen name="PassengerDataScreen" component={PassengerDataScreen} />
+          <Stack.Screen name="CarDataScreen" component={CarDataScreen} />
+          <Stack.Screen name="DashBoardScreen" component={Dashboard} />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>

@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }) {
       }
 
       // Navigate to MapScreen with userLocation
-      navigation.navigate("MapScreen", { userLocation });
+      navigation.navigate("Dashboard", { userLocation });
     } catch (err) {
       const errorMessage = getErrorMessage(err.code);
       setError(errorMessage);
